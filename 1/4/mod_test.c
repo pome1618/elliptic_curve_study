@@ -20,6 +20,7 @@ int main(){
 			printf("%d mod %d =%d\n",i,j,mod(i,j));
 		}
 	}
+	printf("-5p12=%d",(-5)%12);
 	return 0;
 }
 

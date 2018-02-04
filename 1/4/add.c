@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#define DEBUG 1
+
 typedef struct point_s{
 	int x;
 	int y;
@@ -10,7 +12,9 @@ void input_point(point *p){
 }
 
 int mod(int num,int p){
-	if(num<0){
+	if(num%p==0){
+		num=0;
+	}else if(num<0){
 		num=p-((-num)%p);
 	}else{
 		num%=p;
@@ -34,73 +38,69 @@ void extgcd( int a, int b, int* x, int* y, int* d )
 	*d=a;
 }
 
-void extgcd2(int A,int B,int *x,int *y,int *d){
-	int R1,X1,X2,R2,Y1,Y2,R3,Q,X3,Y3;
-	R1=A;
-	X1=1;
-	X2=0;
-	R2=B;
-	Y2=1;
-	while(R2!=0){
-		R3=R1%R2;
-		Q=R1/R2;
-		X3 = X1 - Q * X2;
-		Y3 = Y1 - Q * Y2;
-		R1 = R2;
-		R2 = R3;
-		X1 = X2;
-		X2 = X3;
-		Y1 = Y2;
-		Y2 = Y3;
-	}
-	printf("Y1=%d\n",Y1);
-	*x=X1;
-	*y=Y1;
-	*d=R1;
-}
-
-int main(){
-	int a,b,p;
+void add(point *P,point *Q,point *R,int a,int p){
 	int x,y,d;
-	point P,Q,R;
-	printf("a:");scanf("%d",&a);
-    printf("b:");scanf("%d",&b);
-    printf("p:");scanf("%d",&p);
-	
-	printf("P:");input_point(&P);
-	printf("Q:");input_point(&Q);
-	
-	if(P.x==-1&&P.y==-1){
-		R.x=Q.x;
-		R.y=Q.y;
-	}else if(Q.x==-1&&Q.y==-1){
-		R.x=P.x;
-		R.y=P.y;
+	if(P->x==-1&&P->y==-1){
+		R->x=Q->x;
+		R->y=Q->y;
+	}else if(Q->x==-1&&Q->y==-1){
+		R->x=P->x;
+		R->y=P->y;
 	}else{
-		if(P.y==-Q.y){
-			R.x=-1;
-			R.y=-1;
+		if(P->y==-Q->y){
+			R->x=-1;
+			R->y=-1;
 		}else{
 			int lambda;
 			int numerator,denominator;
-			if(P.x!=Q.x){
-				numerator=P.y-Q.y;
-				denominator=P.x-Q.x;
+			if(P->x!=Q->x){
+				numerator=P->y-Q->y;
+				denominator=P->x-Q->x;
 			}else{
-				numerator=3*P.x*P.x+a;
-				denominator=2*P.y;
+				numerator=3*P->x*P->x+a;
+				denominator=2*P->y;
 			}
 			numerator=mod(numerator,p);
 			denominator=mod(denominator,p);
 			extgcd(p,denominator,&x,&y,&d);
 			lambda=mod(numerator*y,p);
 
-			R.x=mod(lambda*lambda-P.x-Q.x,p);
-			R.y=mod(lambda*(P.x-R.x)-P.y,p);
+			R->x=mod(lambda*lambda-P->x-Q->x,p);
+			R->y=mod(lambda*(P->x-R->x)-P->y,p);
+#if DEBUG
+			printf("\tnumerator is %d\n\tdenominator is %d\n\tlamda is %d\n\tR=(%d,%d)\n",numerator,denominator,lambda,R->x,R->y);
+#endif
 		}
 	}
+}
 
-	printf("R=(%d,%d)\n",R.x,R.y);
+int check_P(point P[],point *R){
+	int i;
+	for(i=0;i<10;i++){
+		if(P[i].x==R->x&&P[i].y==R->y){
+			return i;
+		}
+	}
+}
+
+int main(){
+	int a,b,p;
+	point P[10]={{-1,-1},{0,2},{1,1},{2,2},{5,2},
+								{6,0},{5,5},{2,5},{1,6},{0,5}};
+	point R;
+
+	printf("a:");scanf("%d",&a);
+    printf("b:");scanf("%d",&b);
+    printf("p:");scanf("%d",&p);
+	
+	int i,j;
+	for(i=0;i<10;i++){
+		for(j=0;j<10;j++){
+			add(&P[i],&P[j],&R,a,p);
+			printf("P%d+P%d=P%d\n",i,j,check_P(P,&R));
+		}
+		printf("\n\n");
+	}
 
 	return 0;
 }
