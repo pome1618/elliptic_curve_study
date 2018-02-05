@@ -1,15 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int divi(int a,int b,int p){
+int div(int a,int b,int p){
 	if(b==0){
 		return -1;
 	}
-	int res=a;
-	while(res%b!=0){
-		res+=p;
+	while(a%b!=0){
+		a+=p;
 	}
-	return res/b;
+	return a/b;
 }
 
 int main(){
