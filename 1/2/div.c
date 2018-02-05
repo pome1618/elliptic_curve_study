@@ -1,17 +1,16 @@
 #include <stdio.h>
 
-void extgcd( int a, int b, int* x, int* y, int* d )
-{
-	int u,v,q,tmp; 
+void extgcd(int a,int b,int* x,int* y,int* d){
+	int u,v,q,t;
 	*x=1;
 	*y=0;
 	u=0;
 	v=1;
 	while(b>0){
 		q=a/b;
-		tmp=u;u=*x-q*u;*x=tmp;
-		tmp=v;v=*y-q*v;*y=tmp;
-		tmp=b;b=a-q*b;a=tmp;
+		t=u;u=*x-q*u;*x=t;
+		t=v;v=*y-q*v;*y=t;
+		t=b;b=a-q*b;a=t;
 	}
 	*d=a;
 }
