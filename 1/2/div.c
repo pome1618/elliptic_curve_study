@@ -19,8 +19,8 @@ int main(){
 	int a,b,p;
 	int x,y,d;
 	printf("a:");scanf("%d",&a);
-    printf("b:");scanf("%d",&b);
-    printf("p:");scanf("%d",&p);
+	printf("b:");scanf("%d",&b);
+	printf("p:");scanf("%d",&p);
 
 	extgcd(p,b,&x,&y,&d);
 
