@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int div(int a,int b,int p){
+int divi(int a,int b,int p){
 	if(b==0){
 		return -1;
 	}
