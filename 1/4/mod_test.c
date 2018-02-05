@@ -1,16 +1,7 @@
 #include <stdio.h>
 
-int mod( int a, int m )
-{
-	  if ( m < 0 ) { m = -m; }
-	    if ( a < 0 ) { 
-			    a = m - ((-a) % m);
-				  }
-		  else { 
-			      a = a % m; 
-				    }
-
-		    return a;
+int mod(int a,int b){
+	return (a%=b)<0?a+b:a;
 }
 
 int main(){

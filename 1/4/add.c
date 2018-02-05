@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 typedef struct point_s{
 	int x;
@@ -47,7 +47,7 @@ void add(point *P,point *Q,point *R,int a,int p){
 		R->x=P->x;
 		R->y=P->y;
 	}else{
-		if(P->y==-Q->y){
+		if(P->x==Q->x&&P->y==mod(-Q->y,p)){
 			R->x=-1;
 			R->y=-1;
 		}else{
