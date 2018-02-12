@@ -30,7 +30,7 @@ void dump(unsigned int num[])
 	printf("\tdump:");
 	for (i = sizeof(unsigned int) * 8 - 1; i >= 0; i--) {
 		printf("%d  ",
-		       (num[1] >> i) & 0x01 == 1 ? -1 : (num[0] >> i) & 0x01);
+		       ((num[1] >> i) & 0x01) == 1 ? -1 : (num[0] >> i) & 0x01);
 	}
 	printf("\n");
 }
