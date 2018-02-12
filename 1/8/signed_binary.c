@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define DEBUG 0
+#define DEBUG 1
 
 typedef struct point_s {
 	int x;
@@ -10,6 +10,50 @@ typedef struct point_s {
 void input_point(point * p)
 {
 	scanf("%d,%d", &(p->x), &(p->y));
+}
+
+int check_P(point P[], point * R)
+{
+	int i;
+	for (i = 0; i < 10; i++) {
+		if (P[i].x == R->x && P[i].y == R->y) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+#if DEBUG
+void dump(unsigned int num[])
+{
+	int i;
+	printf("\tdump:");
+	for (i = sizeof(unsigned int) * 8 - 1; i >= 0; i--) {
+		printf("%d  ",
+		       (num[1] >> i) & 0x01 == 1 ? -1 : (num[0] >> i) & 0x01);
+	}
+	printf("\n");
+}
+#endif
+
+void toNAF(unsigned int NAF[], unsigned int d)
+{
+	int threed = 3 * d;
+	int i;
+	NAF[0] = 0;
+	NAF[1] = 0;
+	for (i = sizeof(unsigned int) * 8 - 1; i > 0; i--) {
+		int bit;
+		bit = ((threed >> i) & 0x01) - ((d >> i) & 0x01);
+		if (bit >= 0) {
+			NAF[0] |= bit << (i - 1);
+		} else {
+			NAF[1] |= 1 << (i - 1);
+		}
+	}
+#if DEBUG
+	dump(NAF);
+#endif
 }
 
 int mod(int num, int p)
@@ -49,8 +93,9 @@ void extgcd(int a, int b, int *x, int *y, int *d)
 void add(point * P, point * Q, point * R, int a, int p)
 {
 #if DEBUG
-	printf("P at add=(%d,%d)\n", P->x, P->y);
-	printf("Q at add=(%d,%d)\n", Q->x, Q->y);
+	printf("\tadd() called\n");
+	printf("\t\tP at add=(%d,%d)\n", P->x, P->y);
+	printf("\t\tQ at add=(%d,%d)\n", Q->x, Q->y);
 #endif
 	int x, y, d, tmp;
 	if (P->x == -1 && P->y == -1) {
@@ -83,7 +128,7 @@ void add(point * P, point * Q, point * R, int a, int p)
 			R->x = tmp;
 #if DEBUG
 			printf
-			    ("\tnumerator is %d\n\tdenominator is %d\n\tlamda is %d\n\tr=(%d,%d)\n",
+			    ("\t\tnumerator is %d\n\t\tdenominator is %d\n\t\tlamda is %d\n\t\tr=(%d,%d)\n",
 			     numerator, denominator, lambda, R->x, R->y);
 #endif
 		}
@@ -94,10 +139,10 @@ void signed_binary(point * P, unsigned int d[], point * R, int a, int p)
 {
 	point Q;
 	point minusP;
-	minusP.x=P->x;
-	minusP.y=mod(-P->y,p);
+	minusP.x = P->x;
+	minusP.y = mod(-P->y, p);
 	int bit = sizeof(unsigned int) * 8 - 1;
-	while (d[0] >> bit == 0&&d[1]>>bit==0) {
+	while (d[0] >> bit == 0 && d[1] >> bit == 0) {
 		bit--;
 	}
 #if DEBUG
@@ -107,21 +152,14 @@ void signed_binary(point * P, unsigned int d[], point * R, int a, int p)
 	Q.y = P->y;
 #if DEBUG
 	printf("Q=(%d,%d)\n", Q.x, Q.y);
-	dump(d);
 #endif
 	int i;
 	for (i = bit - 1; i >= 0; i--) {
 		add(&Q, &Q, &Q, a, p);
-		if ((d[1]>>i)&0x01){
-#if DEBUG
-			printf("Q<-Q-P\n");
-#endif
-			add(&Q,&minusP,&Q,a,p);
-		}else if((d[0]>>i)&0x01){
-#if DEBUG
-			printf("Q<-Q+P\n");
-#endif
-			add(&Q,P,&Q,a,p);
+		if ((d[1] >> i) & 0x01) {
+			add(&Q, &minusP, &Q, a, p);
+		} else if ((d[0] >> i) & 0x01) {
+			add(&Q, P, &Q, a, p);
 		}
 #if DEBUG
 		printf("added Q=(%d,%d)\n", Q.x, Q.y);
@@ -130,47 +168,6 @@ void signed_binary(point * P, unsigned int d[], point * R, int a, int p)
 	}
 	R->x = Q.x;
 	R->y = Q.y;
-}
-
-#if DEBUG
-void dump(unsigned int num[]){
-	        int i;
-			        for(i=sizeof(unsigned int)*8-1;i>=0;i--){
-						                printf("%d  ",(num[1]>>i)&0x01==1?-1:(num[0]>>i)&0x01);
-										        }
-					        printf("\n");
-}
-#endif
-
-void toNAF(unsigned int NAF[], unsigned int d)
-{
-	int threed = 3 * d;
-	int i;
-	NAF[0] = 0;
-	NAF[1] = 0;
-	for (i = sizeof(unsigned int) * 8 - 1; i > 0; i--) {
-		int bit;
-		bit = ((threed >> i) & 0x01) - ((d >> i) & 0x01);
-		if (bit >= 0) {
-			NAF[0] |= bit << (i - 1);
-		} else {
-			NAF[1] |= 1 << (i - 1);
-		}
-	}
-#if DEBUG
-	dump(NAF);
-#endif
-}
-
-int check_P(point P[], point * R)
-{
-	int i;
-	for (i = 0; i < 10; i++) {
-		if (P[i].x == R->x && P[i].y == R->y) {
-			return i;
-		}
-	}
-	return -1;
 }
 
 int main()
@@ -198,7 +195,7 @@ int main()
 		return -1;
 	}
 
-	toNAF(NAF,d);
+	toNAF(NAF, d);
 
 	signed_binary(&P[p_n], NAF, &R, a, p);
 
