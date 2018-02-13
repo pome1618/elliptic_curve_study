@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 typedef struct point_s {
 	int x;
